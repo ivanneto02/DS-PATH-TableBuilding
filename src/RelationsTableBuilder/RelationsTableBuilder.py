@@ -8,3 +8,4 @@ class RelationsTableBuilder:
 
     def dump_table(self, path):
         pass
+    

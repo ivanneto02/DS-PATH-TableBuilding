@@ -1,8 +1,9 @@
 class RelRowStrategy:
-    def __init__(self, ctx):
-        self.ctx = ctx
-        self.data = ctx.data # import data from context
+    def __init__(self):
+        # We will return one or multiple rows:
+        # from_string, to_string, relation_type, source_name, source_url
+        pass
 
-    def build_row(self):
+    def build_row(self, row):
         '''Override this function for each strategy'''
         pass

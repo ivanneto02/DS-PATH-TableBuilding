@@ -2,3 +2,4 @@ from .RelRowStrategy import RelRowStrategy
 
 from .MayoclinicRelRowStrategy import MayoclinicRelRowStrategy
 from .WebMDRelRowStrategy import WebMDRelRowStrategy
+from .MedlineplusStrategy import MedlineplusStrategy

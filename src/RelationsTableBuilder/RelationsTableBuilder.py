@@ -32,8 +32,8 @@ class RelationsTableBuilder:
 
         print("> > Building exploded table")
         # Clean up relations column
-        self.table["relations"] = self.table["relations"].str.replace(" ", "", regex=False)
         self.table["relations"] = self.table["relations"].str.replace("[", "", regex=False)
+        self.table["relations"] = self.table["relations"].str.replace(r"\s+", " ", regex=True) # removes white space
         self.table["relations"] = self.table["relations"].str.replace("]", "", regex=False)
         self.table["relations"] = self.table["relations"].str.replace("'", "", regex=False)
 
@@ -42,6 +42,9 @@ class RelationsTableBuilder:
         self.table = self.table.assign(relations=self.table["relations"].str.split(",")).explode("relations")
         self.table.rename(columns={"relations" : "to_string"}, inplace=True)
         self.table.reset_index(drop=True, inplace=True)
+
+        self.table["to_string"] = self.table["to_string"].str.replace("@@@", ",", regex=False).str.strip()
+        self.table["to_string"] = self.table["to_string"].str.replace(r"\\n \\n ", "\n", regex=True)
 
         print(f"> > > After explosion length: {len(self.table)}")
         print("> > Sneak peek at final table:")

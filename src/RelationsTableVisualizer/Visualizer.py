@@ -18,7 +18,7 @@ class Visualizer():
             engine="neato",
             graph_attr={"label" : "Source: Mayoclinic", "labelloc" : "t"},
             node_attr={"color" : "aquamarine", "style" : "filled"},
-            edge_attr={"len" : "5.0"},
+            edge_attr={"len" : "50.0"},
             format="svg")
         # Create from_string concept onde
         gra.node(concept_name, concept_name)
@@ -28,7 +28,7 @@ class Visualizer():
             gra.node(row["to_string"], row["to_string"])
             gra.edge(concept_name, row["to_string"], label=row["rel_type"])
             known_concepts.append(row["to_string"])
-        gra = gra.unflatten(stagger=10)
+        gra = gra.unflatten(stagger=50)
         if not os.path.exists("./saves/graphs/"):
             os.makedirs("./saves/graphs/")
         gra.render("./saves/graphs/" + f'{self.source_name}_{concept_name}_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}')
@@ -42,24 +42,28 @@ class Visualizer():
         print("> Visualizing entire source in big graph. This may take a while.")
         df = self.data
 
+        source_name = self.data["source_name"].iloc[0]
+
         gra = graphviz.Digraph(
             engine="neato",
-            graph_attr={"label" : "Source: Mayoclinic", "labelloc" : "t"},
+            graph_attr={
+                "label" : f"Source: {source_name}",
+                "labelloc" : "t"},
             node_attr={"color" : "aquamarine", "style" : "filled"},
-            edge_attr={"len" : "5.0"},
+            edge_attr={"len" : "20.0"},
             format="svg")
 
         known_concepts = []
         edges = []
         for index, row in self.data.iterrows():
             if row["from_string"] not in known_concepts:
-                gra.node(row["from_string"], row["from_string"])
+                gra.node(str(row["from_string"]), str(row["from_string"]))
                 known_concepts.append(row["from_string"])
             if row["to_string"] not in known_concepts:
-                gra.node(row["to_string"], row["to_string"])
+                gra.node(str(row["to_string"]), str(row["to_string"]))
                 known_concepts.append(row["to_string"])
             if (row["from_string"], row["to_string"]) not in edges:
-                gra.edge(row["from_string"], row["to_string"], label=row["rel_type"])
+                gra.edge(str(row["from_string"]), str(row["to_string"]), label=row["rel_type"])
                 edges.append((row["from_string"], row["to_string"]))
         gra = gra.unflatten(stagger=10)
         if not os.path.exists("./saves/graphs/"):

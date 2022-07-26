@@ -58,6 +58,7 @@ class RelationsTableBuilder:
         df = self.data.copy()
         df["match"] = df.apply(lambda x : x[2] in x[3], axis=1)
         df = df.loc[df["match"] == True]
+        print(df.loc[df["match"] != True].head(20))
         self.data = df.copy()
         self.data = self.data.drop(columns=["match"])
 

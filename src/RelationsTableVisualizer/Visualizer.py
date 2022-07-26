@@ -16,7 +16,6 @@ class Visualizer():
         # Create graph
         gra = graphviz.Digraph(
             engine="neato",
-            graph_attr={"label" : "Source: Mayoclinic", "labelloc" : "t"},
             node_attr={"color" : "aquamarine", "style" : "filled"},
             edge_attr={"len" : "50.0"},
             format="svg")

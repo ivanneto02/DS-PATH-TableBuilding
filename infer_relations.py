@@ -22,6 +22,9 @@ def infer_relations():
     df = df[df["concept_type"] == "drug"]
     df["source_name"] = df["source_name"].str.lower()
     slices = []
+    
+    print(df.head(10))
+
     for source in sources:
         curr = df[df["source_name"] == source]
         slices.append(curr)

@@ -15,7 +15,7 @@ def infer_relations():
 
     print("Preprocessing")
     print("> Separating columns")
-    columns = ["name", "raw_html", "source_name", "source_url", "concept_type"]
+    columns = ["name", "raw_html", "source_name", "source_url", "concept_type", "date_time_scraped"]
     df = df[columns]
 
     print("> Slicing based on sources")

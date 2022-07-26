@@ -28,7 +28,7 @@ class RelationsTableBuilder:
         temp_table = temp_table.reset_index(drop=True)
         self.table = temp_table.copy()
 
-        self.table.columns = ["from_string", "relations", "rel_type", "source_name", "source_url", "concept_type"]
+        self.table.columns = ["from_string", "relations", "rel_type", "source_name", "source_url", "concept_type", "date_time_scraped"]
 
         print("> > Building exploded table")
         # Clean up relations column

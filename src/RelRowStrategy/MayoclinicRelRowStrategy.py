@@ -10,6 +10,7 @@ class MayoclinicRelRowStrategy(RelRowStrategy):
         try:
             date_scraped = row["date_time_scraped"]
             text = row["raw_html"]
+            cui1 = row["CUI"]
             soup = BeautifulSoup(text, "lxml")
             content = soup.find("div", attrs={"id" : "main-content"})
             ol = content.find("ol", attrs={"class" : "content"})
@@ -23,7 +24,7 @@ class MayoclinicRelRowStrategy(RelRowStrategy):
             source_name = row["source_name"] # source_name column
             source_url = row["source_url"] # source_url column
             concept_type = row["concept_type"]
-            row_list = [from_string, str(relations), relation_type, source_name, source_url, concept_type, date_scraped]
+            row_list = [from_string, cui1, str(relations), relation_type, source_name, source_url, concept_type, date_scraped]
             return pd.DataFrame(row_list)
 
         except:

@@ -11,20 +11,19 @@ def infer_relations():
     print("> Starting")
     print("> Reading data")
     df = pd.read_csv(PATH_TO_DATA + "/" + DATA_FILE, nrows=N_ROWS)
-    sources = ["mayoclinic", "medline"]
+    sources = ["mayoclinic"]
 
     print("Preprocessing")
     print("> Separating columns")
-    columns = ["name", "raw_html", "source_name", "source_url", "concept_type", "date_time_scraped"]
+    columns = ["name", "CUI", "raw_html", "source_name", "source_url", "concept_type", "date_time_scraped"]
     df = df[columns]
 
     print("> Slicing based on sources")
     df = df[df["concept_type"] == "drug"]
     df["source_name"] = df["source_name"].str.lower()
-    slices = []
-    
-    print(df.head(10))
 
+    slices = []
+    print(df.head(10))
     for source in sources:
         curr = df[df["source_name"] == source]
         slices.append(curr)
@@ -46,6 +45,9 @@ def infer_relations():
 
         # Build the table for each data slice
         builder.build_table()
+
+        # Map the relationships
+        builder.map_relation_cuis()
 
         # Create directory if does not exist
         if not os.path.exists("./saves/tables/"):

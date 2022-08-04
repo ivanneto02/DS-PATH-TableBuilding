@@ -1,5 +1,8 @@
 import pandas as pd
 from src.RelRowStrategy import *
+from src.ConceptTableBuilder import run_third_step
+from config import *
+import src.UMLSConnector as connector
 
 class RelationsTableBuilder:
     def __init__(self, data, strategy):
@@ -11,6 +14,10 @@ class RelationsTableBuilder:
         self.strategy = strategy
 
     def build_table(self):
+        print(f"> > > Dropping duplicates and resetting index")
+        self.data.drop_duplicates(inplace=True, subset=["name", "source_name", "source_url", "concept_type"])
+        self.data.reset_index(inplace=True, drop=True)
+
         # Grab first source name
         print("> Building table")
         print("> > Building unexploded table...")
@@ -28,7 +35,10 @@ class RelationsTableBuilder:
         temp_table = temp_table.reset_index(drop=True)
         self.table = temp_table.copy()
 
-        self.table.columns = ["from_string", "relations", "rel_type", "source_name", "source_url", "concept_type", "date_time_scraped"]
+        print("> > Renaming columns")
+        print(self.table.head(10))
+        print(self.table.columns)
+        self.table.columns = ["from_string", "CUI1", "relations", "rel_type", "source_name", "source_url", "concept_type", "date_time_scraped"]
 
         print("> > Building exploded table")
         # Clean up relations column
@@ -56,11 +66,26 @@ class RelationsTableBuilder:
     def fix_sources(self):
         print("> Fixing sources (TEMP)")
         df = self.data.copy()
-        df["match"] = df.apply(lambda x : x[2] in x[3], axis=1)
+        df["match"] = df.apply(lambda x : x[3] in x[4], axis=1)
         df = df.loc[df["match"] == True]
         print(df.loc[df["match"] != True].head(20))
         self.data = df.copy()
         self.data = self.data.drop(columns=["match"])
+
+    def map_relation_cuis(self):
+        print("> Mapping relation cuis")
+        df = self.table.copy()
+
+        print("    > Establishing MySql connection")
+        connection = connector.connect(
+            host = MYSQL_HOST,
+            database = MYSQL_DATABASE,
+            user = MYSQL_USERNAME,
+            password = MYSQL_PASSWORD)
+
+        print("    > Copying resulting table")
+        df = run_third_step(df=df, name="to_string", connection=connection)
+        self.table = df.copy()
 
     def dump_table(self, path, name):
         if path[len(path) - 1] == "/":

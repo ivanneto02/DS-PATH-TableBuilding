@@ -7,6 +7,7 @@ class MedlineplusStrategy(RelRowStrategy):
         # Create brand name relations
         # Expected columns = [name, raw_html, source_name, source_url, concept_type]
         date_time_scraped = row["date_time_scraped"]
+        cui1 = row["CUI"]
         from_string = row["name"] # Name column
         relation_type1 = "has_tradename"
         relation_type2 = "part_of"
@@ -37,7 +38,7 @@ class MedlineplusStrategy(RelRowStrategy):
                     pass
                 brand_relations.append(item.text.strip().replace(",", "@@@"))
 
-            row1_list = [from_string, str(brand_relations), relation_type1, source_name, source_url, concept_type, date_time_scraped]
+            row1_list = [from_string, cui1, str(brand_relations), relation_type1, source_name, source_url, concept_type, date_time_scraped]
         except Exception as e:
             print("No brand relation found", from_string)
             print(e)
@@ -58,7 +59,7 @@ class MedlineplusStrategy(RelRowStrategy):
                 except:
                     pass
                 comp_relations.append(item.text.strip().replace(",", "@@@"))
-            row2_list = [from_string, str(comp_relations), relation_type2, source_name, source_url, concept_type, date_time_scraped]
+            row2_list = [from_string, cui1, str(comp_relations), relation_type2, source_name, source_url, concept_type, date_time_scraped]
         except Exception as e:
             print("No comp relation found", from_string)
             print(e)

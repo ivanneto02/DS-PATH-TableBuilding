@@ -31,6 +31,9 @@ class RelationsTableBuilder:
                 row_df = pd.DataFrame(new_row).T
                 # Append
                 temp_table = pd.concat([temp_table, row_df], axis=0)
+
+                if (index % 100 == 0):
+                    print(f"Progress: {(index / len(self.data)) * 100}% ({index}/{len(self.data)})")
         # Save to class table
         temp_table = temp_table.reset_index(drop=True)
         self.table = temp_table.copy()

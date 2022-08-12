@@ -37,7 +37,7 @@ class Visualizer():
         for concept in np.unique(self.data["from_string"]):
             self.visualize_single_concept(concept)
 
-    def visualize_entire_source(self):
+    def visualize_entire_source(self, edge_len="20.0"):
         print("> Visualizing entire source in big graph. This may take a while.")
         df = self.data
 
@@ -49,7 +49,7 @@ class Visualizer():
                 "label" : f"Source: {source_name}",
                 "labelloc" : "t"},
             node_attr={"color" : "aquamarine", "style" : "filled"},
-            edge_attr={"len" : "20.0"},
+            edge_attr={"len" : edge_len},
             format="svg")
 
         known_concepts = []

@@ -11,7 +11,7 @@ def infer_relations():
     print("> Starting")
     print("> Reading data")
     df = pd.read_csv(PATH_TO_DATA + "/" + DATA_FILE, nrows=N_ROWS)
-    sources = ["mayoclinic"]
+    sources = ["drugs.com"]
 
     print("Preprocessing")
     print("> Separating columns")
@@ -37,6 +37,8 @@ def infer_relations():
             builder = RelationsTableBuilder(slice, WebMDRelRowStrategy())
         elif source == "medline":
             builder = RelationsTableBuilder(slice, MedlineplusStrategy())
+        elif source == "drugs.com":
+            builder = RelationsTableBuilder(slice, DrugsComRelRowStrategy())
 
         # Temporary until we find a fix
         # Currently some sources are NOT aligned with their source_name

@@ -1,6 +1,7 @@
 from .RelRowStrategy import RelRowStrategy
 from bs4 import BeautifulSoup
 import pandas as pd
+import re
 
 class DrugsComRelRowStrategy(RelRowStrategy):
     def build_row(self, row):
@@ -19,8 +20,6 @@ class DrugsComRelRowStrategy(RelRowStrategy):
         source_url = row["source_url"] # source_url column
         concept_type = row["concept_type"]
 
-        print(from_string, ",")
-
         row_lists = []
         # Find all relationships at once
         try:
@@ -30,39 +29,36 @@ class DrugsComRelRowStrategy(RelRowStrategy):
             content = soup.find("p", attrs={"class" : "drug-subtitle"})
             titles = content.find_all("b")
 
-            print(titles[2])
-
-            curr_row = []
             for title in titles:
                 title_text = title.text
-                title_sibling = title.next_sibling
+                iterator = title.next_sibling
 
-                # clean sibling
-                title_sibling_text = title_sibling.text.replace("[", "").strip()
-                print(f"title_sibling: {title_sibling_text}")
+                items = []
+                while iterator:
+                    if iterator.name == "br":
+                        break
+                    if ("show all" in iterator.text) or (len(iterator.text) < 3):
+                        iterator = iterator.next_sibling
+                        continue
+                    items.append(re.sub('\[[^>]+\]', '', iterator.text).replace("[", "").strip())
+                    iterator = iterator.next_sibling
 
+                curr_row = []
                 if "generic" in title_text.lower():
-                    curr_row = [from_string, cui1, title_sibling_text, relation_type1, source_name, source_url, concept_type, date_time_scraped]
+                    curr_row = [from_string, cui1, items[0], relation_type1, source_name, source_url, concept_type, date_time_scraped]
                 elif "brand" in title_text.lower():
-                    curr_row = [from_string, cui1, title_sibling_text, relation_type2, source_name, source_url, concept_type, date_time_scraped]
+                    curr_row = [from_string, cui1, items, relation_type2, source_name, source_url, concept_type, date_time_scraped]
                 elif "dosage" in title_text.lower():
-                    curr_row = [from_string, cui1, title_sibling_text, relation_type3, source_name, source_url, concept_type, date_time_scraped]
+                    curr_row = [from_string, cui1, items[0], relation_type3, source_name, source_url, concept_type, date_time_scraped]
                 elif "drug class" in title_text.lower():
-                    title_sibling_text = title_sibling.next_sibling.text.replace("[", "").strip()
-                    curr_row = [from_string, cui1, title_sibling_text, relation_type4, source_name, source_url, concept_type, date_time_scraped]
-                row_lists.append(curr_row)
+                    curr_row = [from_string, cui1, items[0], relation_type4, source_name, source_url, concept_type, date_time_scraped]
 
-        except Exception as e:
-            print("A relation processing step has failed", from_string)
-            print(e)
-            row1_list = None
+                row_lists.append(curr_row)
+        except:
+            pass
 
         if len(row_lists) == 0:
-            print("No relations found")
             return list()
 
-        for row in row_lists:
-            print(row)
-
-        zipped = zip(row_lists)
+        zipped = zip(*[l for l in row_lists])
         return pd.DataFrame(list(zipped))

@@ -11,7 +11,7 @@ def infer_relations():
     print("> Starting")
     print("> Reading data")
     df = pd.read_csv(PATH_TO_DATA + "/" + DATA_FILE, nrows=N_ROWS)
-    sources = ["drugs.com"]
+    sources = ["mayoclinic", "medline", "drugs.com"]
 
     print("Preprocessing")
     print("> Separating columns")

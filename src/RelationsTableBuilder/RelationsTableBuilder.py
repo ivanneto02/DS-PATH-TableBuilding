@@ -59,6 +59,8 @@ class RelationsTableBuilder:
         self.table["to_string"] = self.table["to_string"].str.replace("@@@", ",", regex=False).str.strip()
         self.table["to_string"] = self.table["to_string"].str.replace(r"\\n \\n ", "\n", regex=True)
 
+        self.table.dropna(inplace=True)
+
         print(f"> > > After explosion length: {len(self.table)}")
         print("> > Sneak peek at final table:")
         print(self.table.head(5))
